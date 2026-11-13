@@ -8,6 +8,8 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { WebBadge } from '@/components/web-badge';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { View, Text, Button } from 'react-native';
+import { router } from 'expo-router';
 
 function getDevMenuHint() {
   if (Platform.OS === 'web') {
@@ -54,6 +56,11 @@ export default function HomeScreen() {
             hint={<ThemedText type="code">npm run reset-project</ThemedText>}
           />
         </ThemedView>
+
+        <Button
+        title="Test API"
+        onPress={() => router.push('/test-api')}
+        />
 
         {Platform.OS === 'web' && <WebBadge />}
       </SafeAreaView>
