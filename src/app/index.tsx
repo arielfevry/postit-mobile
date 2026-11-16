@@ -62,7 +62,7 @@ export default function HomeScreen() {
           title="Test login"
           onPress={async () => {
             try {
-              const r = await login({ email: 'you@example.com', password: 'yourpassword' });
+              const r = await login({ email: 'arielfevry@gmail.com', password: 'loveToutou2@*!' });
               console.log('logged in as', r.user.name);
             } catch (e) {
               console.log('failed:', (e as Error).message);
