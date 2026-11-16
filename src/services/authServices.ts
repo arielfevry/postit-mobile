@@ -1,6 +1,6 @@
 import { jwtDecode } from 'jwt-decode';
 import { apiRequest } from './api';
-import { deleteToken, getToken, saveToken } from './session';
+import { clearSession, getToken, saveSession } from './session';
 
 type LoginInput = {
     email: string;
@@ -8,7 +8,8 @@ type LoginInput = {
 }
 
 type LoginResponse = {
-    message: string;
+    message?: string;
+    error?: string;
     token: string;
     user: {
         id: string;
@@ -18,7 +19,7 @@ type LoginResponse = {
 }
 
 export async function login(input: LoginInput) {
-    const response = await apiRequest('/login', {
+    const response = await apiRequest('/api/login', {
         method: 'POST',
         body: JSON.stringify(input)
     });
@@ -27,17 +28,17 @@ export async function login(input: LoginInput) {
     
     if(!response.ok)
     {
-        throw new Error(json.message || 'Login failed');
+        throw new Error(json.error || json.message || 'Login failed');
     }
 
-    await saveToken(json.token);
+    await saveSession({token: json.token, id: json.user.id, name: json.user.name});
 
     return json;
 }
 
 export async function logout()
 {
-    await deleteToken();
+    await clearSession();
     //call this using await logout();
 }
 
@@ -54,14 +55,14 @@ export async function getCurrentSession()
         const decoded = jwtDecode<{sub?: string}>(token);
         if(!decoded.sub)
         {
-            await deleteToken();
+            await clearSession();
             return null;
         }
 
         userId = decoded.sub;
     } catch
     {
-        await deleteToken();
+        await clearSession();
         return null;
     }
 
@@ -71,7 +72,7 @@ export async function getCurrentSession()
 
     if(response.status == 401)
     {
-        await deleteToken();
+        await clearSession();
         return null;
     }
 
