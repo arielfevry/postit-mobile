@@ -24,7 +24,7 @@ export async function login(input: LoginInput) {
         body: JSON.stringify(input)
     });
 
-    const json = (await response.json()) as LoginResponse;
+    const json = (await response.json().catch(() => ({}))) as LoginResponse;
     
     if(!response.ok)
     {
