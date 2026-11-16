@@ -8,8 +8,9 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { WebBadge } from '@/components/web-badge';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-import { View, Text, Button } from 'react-native';
-import { router } from 'expo-router';
+import { Button } from 'react-native';
+
+import { login } from '@/services/authServices';
 
 function getDevMenuHint() {
   if (Platform.OS === 'web') {
@@ -58,8 +59,15 @@ export default function HomeScreen() {
         </ThemedView>
 
         <Button
-        title="Test API"
-        onPress={() => router.push('/test-api')}
+          title="Test login"
+          onPress={async () => {
+            try {
+              const r = await login({ email: 'you@example.com', password: 'yourpassword' });
+              console.log('logged in as', r.user.name);
+            } catch (e) {
+              console.log('failed:', (e as Error).message);
+            }
+          }}
         />
 
         {Platform.OS === 'web' && <WebBadge />}
