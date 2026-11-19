@@ -1,7 +1,7 @@
 
-import LoginScreen from "../../features/auth/loginScreen";
+import AuthScreen from "../../features/auth/authScreen";
 
 export default function Login()
 {
-    return <LoginScreen />;
+    return <AuthScreen />;
 }

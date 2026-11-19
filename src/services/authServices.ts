@@ -18,8 +18,14 @@ type LoginResponse = {
     }
 }
 
+type RegisterInput = {
+    name: string;
+    email: string;
+    password: string;
+}
+
 export async function login(input: LoginInput) {
-    const response = await apiRequest('/api/login', {
+    const response = await apiRequest('/login', {
         method: 'POST',
         body: JSON.stringify(input)
     });
@@ -31,7 +37,9 @@ export async function login(input: LoginInput) {
         throw new Error(json.error || json.message || 'Login failed');
     }
 
+    
     await saveSession({token: json.token, id: json.user.id, name: json.user.name});
+    console.log('Login successful, session saved:', json.user);
 
     return json;
 }
@@ -40,6 +48,21 @@ export async function logout()
 {
     await clearSession();
     //call this using await logout();
+}
+
+export async function register(input: RegisterInput)
+{
+    const response = await apiRequest('/register', {
+        method: 'POST',
+        body: JSON.stringify(input)
+    });
+
+    if (!response.ok) {
+        const json = await response.json();
+        throw new Error(json.error || json.message || 'Registration failed');
+    }
+
+    console.log('Registration successful, user created:', input.email);
 }
 
 export async function getCurrentSession()
