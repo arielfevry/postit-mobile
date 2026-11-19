@@ -70,7 +70,7 @@ export default function AuthScreen()
     }
     catch (error)
     {
-      error instanceof Error ? error.message : "Registration failed."
+      setMessage( error instanceof Error ? error.message: "Registration failed. Please try again.");
     }
     finally
     {
