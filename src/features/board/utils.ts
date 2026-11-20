@@ -1,4 +1,4 @@
-import type { Frame } from './types';
+import type { Frame, Viewport, CanvasItem } from './types';
 
 export const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
 
@@ -190,7 +190,7 @@ export function normaliseAngle(deg: number): number {
   return Math.round(a * 10) / 10;
 }
 
-/* ---------------- Board backgrounds ---------------- */
+/* ---------------- Board ---------------- */
 
 export const BACKGROUNDS = [
   { key: 'preset:cork', label: 'Cork' },
@@ -198,6 +198,33 @@ export const BACKGROUNDS = [
   { key: 'preset:dots', label: 'Dot grid' },
   { key: 'preset:chalk', label: 'Chalkboard' },
 ] as const;
+
+export const MIN_ZOOM = 0.2;
+export const MAX_ZOOM = 3;
+
+export function fitViewport(items: CanvasItem[], width: number, height: number): Viewport {
+  // default no items view port size 
+  if (!items.length) return { x: width / 2, y: height / 2, zoom: 1 };
+
+  // get min and max from all items on the canvas
+  const minX = Math.min(...items.map((i) => i.content.x));
+  const minY = Math.min(...items.map((i) => i.content.y));
+  const maxX = Math.max(...items.map((i) => i.content.x + i.content.w));
+  const maxY = Math.max(...items.map((i) => i.content.y + i.content.h));
+
+  const pad = 40;
+  const zoom = clamp(
+    Math.min((width - pad * 2) / (maxX - minX), (height - pad * 2) / (maxY - minY)),
+    MIN_ZOOM,
+    1.25,
+  );
+  
+  return {
+    zoom,
+    x: width / 2 - ((minX + maxX) / 2) * zoom,
+    y: height / 2 - ((minY + maxY) / 2) * zoom,
+  };
+}
 
 // export function backgroundClass(bg: string): string {
 //   if (!bg) return 'pb-surface--cork';
