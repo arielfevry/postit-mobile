@@ -25,7 +25,7 @@ type RegisterInput = {
 }
 
 export async function login(input: LoginInput) {
-    const response = await apiRequest('/login', {
+    const response = await apiRequest('/api/login', {
         method: 'POST',
         body: JSON.stringify(input)
     });
@@ -39,7 +39,7 @@ export async function login(input: LoginInput) {
 
     
     await saveSession({token: json.token, id: json.user.id, name: json.user.name});
-    console.log('Login successful, session saved:', json.user);
+    //console.log('Login successful, session saved:', json.user);
 
     return json;
 }
@@ -52,7 +52,7 @@ export async function logout()
 
 export async function register(input: RegisterInput)
 {
-    const response = await apiRequest('/register', {
+    const response = await apiRequest('/api/register', {
         method: 'POST',
         body: JSON.stringify(input)
     });
@@ -89,7 +89,7 @@ export async function getCurrentSession()
         return null;
     }
 
-    const response = await apiRequest(`/users/${userId}`, {
+    const response = await apiRequest(`/api/users/${userId}`, {
         method: 'GET',
     });
 
