@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Button, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { login, register } from "../../services/authServices";
+import { router } from "expo-router";
+import LoadBoard from "@/app/board";
 
 
 
@@ -29,20 +31,22 @@ export default function AuthScreen()
       return;
     }
 
+
     try
     {
       setIsLoading(true);
 
-      await login({email: loginEmail, password: loginPassword});
+      await login({ email: loginEmail.trim().toLowerCase(), password: loginPassword });
 
       setSuccessMessage("Login successful!");
 
       //add redirect to home page or dashboard here
+      router.replace("/board");
     }
     catch (error)
     {
-       error instanceof Error ? error.message : "Login failed."
-    }
+       setMessage(error instanceof Error ? error.message : "Login failed.");
+    } 
     finally
     {
       setIsLoading(false);
