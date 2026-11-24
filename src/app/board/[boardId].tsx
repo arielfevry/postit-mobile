@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, useWindowDimensions } from 'react-native';
+import { View, Text, ActivityIndicator, useWindowDimensions, Keyboard } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useBoard } from '@/features/board/useBoard';
@@ -15,11 +15,25 @@ export default function BoardScreen() {
   const vpKey = `viewport:${boardId}`;
   const [viewport, setViewport] = useState<Viewport | null>(null);
   const [savedChecked, setSavedChecked] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
-  const { board, canvasItems, loadState, error } = useBoard(boardId, async () => {
+  const stopEditing = () => {
+    setEditingId(null);
+    Keyboard.dismiss();
+  };
+
+  const { board, canvasItems, loadState, error, maxZ, updateItem } = useBoard(boardId, async () => {
     await clearSession();
     router.replace('/auth/login');
   });
+
+  const bringToFront = (id: string) => {
+  const it = canvasItems.find((i) => i._id === id);
+  if (!it) return;
+  const atTop = canvasItems.filter((i) => i.content.z === maxZ).length;
+  if (it.content.z < maxZ || atTop > 1) updateItem(id, { z: maxZ + 1 });
+};
 
   // with saved viewport get from async storage 
   useEffect(() => {
@@ -61,8 +75,21 @@ export default function BoardScreen() {
     <View style={{ flex: 1, backgroundColor: PB.page }}>
       <Canvas
         items={canvasItems}
+        selectedId={selectedId}
+        editingId={editingId}
         initialViewport={viewport}
         onViewport={(v) => AsyncStorage.setItem(vpKey, JSON.stringify(v)).catch(() => {})}
+        onSelect={(id) => {
+          setSelectedId(id);
+          if (id !== editingId) stopEditing();
+        }}
+        onChange={updateItem}
+        onBringToFront={bringToFront}
+        onStartEdit={(id) => {
+          setSelectedId(id);
+          setEditingId(id);
+        }}
+        onStopEdit={stopEditing}
       />
       <Text pointerEvents="none" style={{ position: 'absolute', top: 50, left: 16, color: 'white' }}>
         {board?.title}
