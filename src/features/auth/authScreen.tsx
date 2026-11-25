@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { Image, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { login, register } from "../../services/authServices";
-import { router } from "expo-router";
-import LoadBoard from "@/app/board";
 
 
 export default function AuthScreen()
