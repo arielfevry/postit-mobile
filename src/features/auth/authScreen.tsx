@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import { useState } from "react";
 import { Image, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { login, register } from "../../services/authServices";
@@ -33,7 +34,7 @@ export default function AuthScreen()
     {
       setIsLoading(true);
 
-      await login({ email: loginEmail.trim().toLowerCase(), password: loginPassword });
+      await login({email: loginEmail, password: loginPassword});
 
       setSuccessMessage("Login successful!");
 
@@ -100,11 +101,6 @@ export default function AuthScreen()
           {isRegisterMode ? "Welcome to PostIt!" : "Login to PostIt!"}
         </Text>
 
-        {/* <Text style={styles.subtitle}>
-          {isRegisterMode
-            ? "NEW USER REGISTRATION"
-            : "PLEASE LOG IN"}
-        </Text> */}
       </View>
 
       {/*mode switch*/}
@@ -328,10 +324,12 @@ const styles = StyleSheet.create({
   tabText: {
     fontWeight: '600',
     color: '#0d6efd',
+    fontFamily: 'PatrickHand_400Regular'
   },
 
   activeTabText: {
     color: '#000000',
+    fontFamily: 'PatrickHand_400Regular'
   },
 
   button: {
@@ -345,13 +343,13 @@ const styles = StyleSheet.create({
   buttonTextBlack: {
     color: '#000000', // Title color
     fontSize: 18,
-    //fontFamily: 'PatrickHand-Regular', // Title font family
+    fontFamily: 'PatrickHand_400Regular', // Title font family
   },
 
   buttonTextWhite: {
     color: '#ffffff', // Title color
     fontSize: 18,
-    //fontFamily: 'PatrickHand-Regular', // Title font family
+    fontFamily: 'PatrickHand_400Regular', // Title font family
   },
 
   input: {
@@ -361,6 +359,7 @@ const styles = StyleSheet.create({
   padding: 14,
   marginBottom: 16,
   fontSize: 16,
+  fontFamily: 'PatrickHand_400Regular'
   },
 
   errorMessage: {
