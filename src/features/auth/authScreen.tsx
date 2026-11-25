@@ -1,9 +1,7 @@
-import { useState } from "react";
-import { Button, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import { login, register } from "../../services/authServices";
 import { router } from "expo-router";
-import LoadBoard from "@/app/board";
-
+import { useState } from "react";
+import { Image, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { login, register } from "../../services/authServices";
 
 
 export default function AuthScreen()
@@ -36,7 +34,7 @@ export default function AuthScreen()
     {
       setIsLoading(true);
 
-      await login({ email: loginEmail.trim().toLowerCase(), password: loginPassword });
+      await login({email: loginEmail, password: loginPassword});
 
       setSuccessMessage("Login successful!");
 
@@ -83,20 +81,26 @@ export default function AuthScreen()
   }
   
   return (
-    <View style={styles.container}>
+  <View style={styles.container}>
+    <Image
+      source={require("../../../assets/images/cork.png")}
+      style={styles.backgroundImage}
+      resizeMode="repeat"
+    />
     <View style={styles.card}>
+
+      <Image
+      source={require("../../../assets/images/note.png")}
+      style={[styles.paperBackground, !isRegisterMode && styles.registerCard]}
+      resizeMode="stretch"
+      />
 
       {/* header */}
       <View style={styles.header}>
         <Text style={styles.title}>
-          {isRegisterMode ? "Create Account" : "Account Login"}
+          {isRegisterMode ? "Welcome to PostIt!" : "Login to PostIt!"}
         </Text>
 
-        <Text style={styles.subtitle}>
-          {isRegisterMode
-            ? "NEW USER REGISTRATION"
-            : "PLEASE LOG IN"}
-        </Text>
       </View>
 
       {/*mode switch*/}
@@ -141,6 +145,7 @@ export default function AuthScreen()
       </View>
           {!isRegisterMode && (
         <View>
+
           <TextInput
             style={styles.input}
             placeholder="Email"
@@ -158,13 +163,27 @@ export default function AuthScreen()
             onChangeText={setLoginPassword}
             secureTextEntry
             autoComplete="current-password"
+            autoCapitalize="none"
           />
 
-          <Button
-            title={isLoading ? "Logging in..." : "Login"}
+          <TouchableOpacity
+            style={styles.button}
             onPress={doLogin}
             disabled={isLoading}
-          />
+          >
+            <Text style={styles.buttonTextBlack}>
+              {isLoading ? "Logging in..." : "Sign In"}
+            </Text>
+          </TouchableOpacity>
+
+          {/* <Button
+            title={isLoading ? "Logging in..." : "Sign In"}
+            onPress={doLogin}
+            disabled={isLoading}
+            color="#ffc107"
+            
+          /> */}
+
       </View>
       )}
 
@@ -198,11 +217,15 @@ export default function AuthScreen()
             autoComplete="new-password"
           />
 
-          <Button
-            title={isLoading ? "Registering..." : "Register"}
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: "#198754", borderRadius: 8 }]}
             onPress={doRegister}
             disabled={isLoading}
-          />
+          >
+            <Text style={styles.buttonTextWhite}>
+              {isLoading ? "Registering..." : "Register"}
+            </Text>
+          </TouchableOpacity>
         </View>
       )}
       {/* Feedback */}
@@ -225,16 +248,40 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#b78656',
+  },
+
+  backgroundImage: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+  },
+
+  paperBackground: {
+    position: 'absolute',
+    left: '-10%',
+    top: '-20%',
+    height: '130%',
+    width: '120%',
+  },
+
+  cardContent: {
+    paddingTop: 26,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    
   },
 
   card: {
-    width: '100%',
-    maxWidth: 480,
-    padding: 24,
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
-    elevation: 5,
+   width: '90%',
+    maxWidth: 420,
+    minHeight: 400,
+    position: 'relative',
+    
+  },
+
+  registerCard: {
+    height: 490,
   },
 
   header: {
@@ -271,16 +318,38 @@ const styles = StyleSheet.create({
   },
 
   activeTab: {
-    backgroundColor: '#2563eb',
+    backgroundColor: '#e2f383',
   },
 
   tabText: {
     fontWeight: '600',
-    color: '#555555',
+    color: '#0d6efd',
+    fontFamily: 'PatrickHand_400Regular'
   },
 
   activeTabText: {
-    color: '#ffffff',
+    color: '#000000',
+    fontFamily: 'PatrickHand_400Regular'
+  },
+
+  button: {
+    backgroundColor: '#ffc107',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+
+  buttonTextBlack: {
+    color: '#000000', // Title color
+    fontSize: 18,
+    fontFamily: 'PatrickHand_400Regular', // Title font family
+  },
+
+  buttonTextWhite: {
+    color: '#ffffff', // Title color
+    fontSize: 18,
+    fontFamily: 'PatrickHand_400Regular', // Title font family
   },
 
   input: {
@@ -290,6 +359,7 @@ const styles = StyleSheet.create({
   padding: 14,
   marginBottom: 16,
   fontSize: 16,
+  fontFamily: 'PatrickHand_400Regular'
   },
 
   errorMessage: {
